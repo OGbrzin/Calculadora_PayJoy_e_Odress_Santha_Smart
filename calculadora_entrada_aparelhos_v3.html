@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Entrada</title>
+<style>
+:root{--bg:#0f1115;--card:#171a21;--card2:#1d222b;--text:#f4f6f8;--muted:#9da6b3;--border:#2b313c;--accent:#7c5cff;--green:#32d583;--red:#ff5c70;--yellow:#f5c451;--blue:#4da3ff}*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:20px;background:linear-gradient(135deg,#0b0d11,#151923);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}.wrap{max-width:1050px;margin:auto}header{margin-bottom:18px}h1{margin:0 0 6px;font-size:clamp(25px,5vw,38px)}header p{margin:0;color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{background:rgba(23,26,33,.96);border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:0 12px 35px rgba(0,0,0,.18)}.full{grid-column:1/-1}h2{font-size:17px;margin:0 0 16px}label{display:block;color:#c9ced6;font-size:13px;margin:13px 0 7px}input,select{width:100%;padding:13px 14px;border-radius:11px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:16px;outline:none}input:focus,select:focus{border-color:var(--accent)}.search{margin-bottom:10px}.hint{font-size:12px;color:var(--muted);margin-top:6px}.btn{width:100%;border:0;border-radius:12px;padding:14px 16px;background:var(--accent);color:#fff;font-size:15px;font-weight:800;cursor:pointer}.btn:hover{filter:brightness(1.08)}.btn-secondary{background:var(--card2);border:1px solid var(--border)}.btn-reverse{background:#263449;border:1px solid #3a5270}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.product-info{display:none;margin-top:14px;padding:13px;border:1px solid var(--border);border-radius:12px;background:var(--card2)}.product-info strong{display:block;margin-bottom:5px}.product-info span{color:var(--muted);font-size:13px}.result{display:none}.status{padding:15px;border-radius:13px;font-weight:800;font-size:18px;margin-bottom:15px}.ok{background:rgba(50,213,131,.12);color:var(--green);border:1px solid rgba(50,213,131,.3)}.no{background:rgba(255,92,112,.12);color:var(--red);border:1px solid rgba(255,92,112,.3)}.rows{display:grid;gap:9px}.row{display:flex;justify-content:space-between;gap:15px;padding:11px 0;border-bottom:1px solid #252a33}.row:last-child{border-bottom:0}.row span:first-child{color:var(--muted)}.row strong{text-align:right}.highlight,.reverse-box{background:var(--card2);padding:16px;border-radius:13px;margin-top:14px}.highlight .big,.reverse-box .big{font-size:28px;font-weight:900;margin-top:4px}.commission{color:var(--yellow)}.reverse-box{display:none;background:rgba(77,163,255,.08);border:1px solid rgba(77,163,255,.25)}.history-list{display:grid;gap:10px;margin-top:15px}.history-empty{color:var(--muted);font-size:14px;padding:10px 0}.history-item{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:14px}.history-top{display:flex;justify-content:space-between;gap:12px;margin-bottom:8px}.history-title{font-weight:800}.history-date{color:var(--muted);font-size:11px;text-align:right}.history-details{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px}.history-details div{padding:8px;background:#15181e;border-radius:8px}.history-details span{display:block;color:var(--muted);margin-bottom:3px}.history-actions{margin-top:10px;display:flex;justify-content:flex-end}.delete-history{border:0;background:transparent;color:var(--red);cursor:pointer;font-size:12px}.foot{color:var(--muted);font-size:12px;margin-top:16px;line-height:1.5}@media(max-width:700px){body{padding:14px}.grid{grid-template-columns:1fr}.full{grid-column:auto}.buttons{grid-template-columns:1fr}.history-details{grid-template-columns:1fr 1fr}}@media(max-width:430px){.history-details{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>Calculadora de Entrada</h1><p>Selecione o aparelho, simule a entrada e descubra até onde você pode negociar.</p></header>
+<div class="grid">
+<section class="card">
+<h2>1. Aparelho</h2>
+<label for="busca">🔎 Buscar aparelho</label>
+<input id="busca" class="search" type="text" placeholder="Digite modelo, marca ou memória..." oninput="filtrarAparelhos()">
+<label for="aparelho">Aparelho</label>
+<select id="aparelho" onchange="selecionarAparelho()"><option value="">Selecione um aparelho</option></select>
+<div class="hint">Pesquise pelo nome ou selecione diretamente na lista.</div>
+<div class="product-info" id="productInfo"><strong id="productName"></strong><span id="productPrices"></span></div>
+<label for="valor">Valor do aparelho / valor financiado</label>
+<input id="valor" type="number" step="0.01" min="0" placeholder="Ex.: 1599,00">
+<div class="hint">O valor cadastrado é o preço de venda, mas continua editável.</div>
+<label for="custo">Custo do aparelho</label>
+<input id="custo" type="number" step="0.01" min="0" placeholder="Ex.: 881,37">
+<div class="hint">O custo também é preenchido automaticamente e pode ser alterado.</div>
+</section>
+<section class="card">
+<h2>2. Simulação</h2>
+<label for="financeira">Financeira</label>
+<select id="financeira"><option value="0.02">PayJoy — 2%</option><option value="0.07">Odress — 7%</option></select>
+<label for="entradaFin">Entrada estipulada pela financeira</label>
+<input id="entradaFin" type="number" step="0.01" min="0" placeholder="Ex.: 341,81">
+<label for="entradaCliente">Quanto o cliente consegue pagar de entrada?</label>
+<input id="entradaCliente" type="number" step="0.01" min="0" placeholder="Ex.: 150,00">
+<label for="meta">Lucro mínimo necessário</label>
+<input id="meta" type="number" step="0.01" min="0" value="400">
+<div class="buttons"><button class="btn" onclick="calcular()">CALCULAR OFERTA</button><button class="btn btn-reverse" onclick="calcularReversa()">🧮 MENOR ENTRADA</button></div>
+<button class="btn btn-secondary" style="margin-top:10px" onclick="limparTudo()">↻ NOVA SIMULAÇÃO</button>
+</section>
+<section class="card full result" id="resultado">
+<h2>Resultado da simulação</h2><div id="status"></div>
+<div class="rows">
+<div class="row"><span>Aparelho</span><strong id="rAparelho"></strong></div><div class="row"><span>Valor do aparelho</span><strong id="rValor"></strong></div><div class="row"><span>Entrada estipulada pela financeira</span><strong id="rEntradaFin"></strong></div><div class="row"><span>Valor após deduzir a entrada estipulada</span><strong id="rBase"></strong></div><div class="row"><span>Financeira / taxa</span><strong id="rTaxa"></strong></div><div class="row"><span>Desconto da taxa</span><strong id="rDesconto"></strong></div><div class="row"><span>Valor após a taxa</span><strong id="rPosTaxa"></strong></div><div class="row"><span>Entrada oferecida pelo cliente</span><strong id="rCliente"></strong></div><div class="row"><span>Valor final da simulação</span><strong id="rFinal"></strong></div><div class="row"><span>Custo do aparelho</span><strong id="rCusto"></strong></div><div class="row"><span>Lucro da simulação</span><strong id="rLucro"></strong></div>
+</div>
+<div class="highlight"><div>Comissão (3% sobre o lucro)</div><div class="big commission" id="rComissao"></div></div>
+<div class="reverse-box" id="reverseBox"><div>🧮 Menor entrada necessária para atingir o lucro mínimo</div><div class="big" id="rNecessario"></div><div class="hint" id="rExtra"></div></div>
+<div class="foot">Fórmula: (valor do aparelho − entrada estipulada) × (1 − taxa da financeira) + entrada do cliente = valor final.<br>Lucro = valor final − custo do aparelho.<br>Comissão = 3% do lucro.</div>
+</section>
+<section class="card full">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:15px"><h2 style="margin:0">📋 Histórico das simulações</h2><button class="delete-history" onclick="limparHistorico()">Apagar histórico</button></div>
+<div id="historico" class="history-list"></div>
+</section>
+</div></div>
+<script>
+const aparelhos={
+Samsung:[["A07 128GB",720.84,1319.90],["A07 256GB",789.07,1499],["A17 128GB",881.37,1599],["A17 256GB",1281.79,1999]],
+Motorola:[["Moto G35 128GB",881.45,1699.50],["Moto G35 256GB",946.22,1990]],
+Realme:[["Note 60x 128GB",775,1400],["Note 70 256GB",880,1575],["Realme C75 256GB",1271.10,1870],["Realme C85 256GB",1278.75,1990]],
+Xiaomi:[["Redmi 15C 128GB",810,1480],["Redmi 15C 256GB",870,1480],["Redmi 15 128GB",890,1550],["Redmi Note 15 128GB",1070,1890],["Redmi Note 15 256GB",1225,1999]],
+Infinix:[["Hot 50I 256GB",655,1499]]};
+const money=v=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(v);
+const num=id=>{const v=parseFloat(document.getElementById(id).value);return Number.isFinite(v)?v:0};
+function listaAparelhos(){const lista=[];Object.entries(aparelhos).forEach(([marca,modelos])=>modelos.forEach((a,indice)=>lista.push({marca,indice,nome:a[0],custo:a[1],venda:a[2]})));return lista}
+function carregarAparelhos(filtro=""){const s=document.getElementById("aparelho"),t=filtro.trim().toLowerCase();s.innerHTML='<option value="">Selecione um aparelho</option>';listaAparelhos().filter(a=>`${a.marca} ${a.nome}`.toLowerCase().includes(t)).forEach(a=>{const o=document.createElement("option");o.value=`${a.marca}|${a.indice}`;o.textContent=`${a.marca} — ${a.nome}`;s.appendChild(o)})}
+function filtrarAparelhos(){carregarAparelhos(document.getElementById("busca").value)}
+function selecionarAparelho(){const v=document.getElementById("aparelho").value;if(!v){document.getElementById("productInfo").style.display="none";return}const [marca,i]=v.split("|"),a=aparelhos[marca][i];document.getElementById("valor").value=a[2];document.getElementById("custo").value=a[1];document.getElementById("productInfo").style.display="block";document.getElementById("productName").textContent=`${marca} ${a[0]}`;document.getElementById("productPrices").textContent=`Custo: ${money(a[1])} • Venda: ${money(a[2])}`}
+function nomeAparelho(){const s=document.getElementById("aparelho");return s.value?s.options[s.selectedIndex].text:"Personalizado"}
+function validar(){const valor=num("valor"),ef=num("entradaFin"),ec=num("entradaCliente"),custo=num("custo"),meta=num("meta");if(valor<=0)return alert("O valor do aparelho precisa ser maior que R$ 0,00."),false;if(custo<0)return alert("O custo não pode ser negativo."),false;if(ef<0)return alert("A entrada estipulada não pode ser negativa."),false;if(ec<0)return alert("A entrada do cliente não pode ser negativa."),false;if(meta<0)return alert("O lucro mínimo não pode ser negativo."),false;if(ef>valor)return alert("A entrada estipulada pela financeira não pode ser maior que o valor do aparelho."),false;return true}
+function obterCalculo(){const valor=num("valor"),entradaFin=num("entradaFin"),entradaCliente=num("entradaCliente"),taxa=parseFloat(document.getElementById("financeira").value),custo=num("custo"),meta=num("meta"),base=valor-entradaFin,descontoTaxa=base*taxa,posTaxa=base-descontoTaxa,finalSimulacao=posTaxa+entradaCliente,lucro=finalSimulacao-custo,comissao=Math.max(0,lucro)*.03,entradaNecessaria=Math.max(0,meta+custo-posTaxa),adicional=Math.max(0,entradaNecessaria-entradaCliente);return{valor,entradaFin,entradaCliente,taxa,custo,meta,base,descontoTaxa,posTaxa,finalSimulacao,lucro,comissao,entradaNecessaria,adicional,aplicavel:lucro>=meta}}
+function mostrarResultado(c){document.getElementById("resultado").style.display="block";const st=document.getElementById("status");st.className="status "+(c.aplicavel?"ok":"no");st.textContent=c.aplicavel?"✓ OFERTA APLICÁVEL":"✕ OFERTA NÃO APLICÁVEL";document.getElementById("rAparelho").textContent=nomeAparelho();document.getElementById("rValor").textContent=money(c.valor);document.getElementById("rEntradaFin").textContent=money(c.entradaFin);document.getElementById("rBase").textContent=money(c.base);document.getElementById("rTaxa").textContent=`${c.taxa*100}%`;document.getElementById("rDesconto").textContent=money(c.descontoTaxa);document.getElementById("rPosTaxa").textContent=money(c.posTaxa);document.getElementById("rCliente").textContent=money(c.entradaCliente);document.getElementById("rFinal").textContent=money(c.finalSimulacao);document.getElementById("rCusto").textContent=money(c.custo);document.getElementById("rLucro").textContent=money(c.lucro);document.getElementById("rComissao").textContent=money(c.comissao);document.getElementById("reverseBox").style.display="none"}
+function calcular(){if(!validar())return;const c=obterCalculo();mostrarResultado(c);salvarHistorico(c);document.getElementById("resultado").scrollIntoView({behavior:"smooth",block:"start"})}
+function calcularReversa(){if(!validar())return;const c=obterCalculo();mostrarResultado(c);const b=document.getElementById("reverseBox");b.style.display="block";document.getElementById("rNecessario").textContent=money(c.entradaNecessaria);document.getElementById("rExtra").textContent=c.aplicavel?`O cliente já oferece ${money(c.entradaCliente)}. Você pode reduzir a entrada até ${money(c.entradaNecessaria)} e ainda manter ${money(c.meta)} de lucro.`:`Faltam ${money(c.adicional)} de entrada para atingir ${money(c.meta)} de lucro mínimo.`;salvarHistorico(c);document.getElementById("resultado").scrollIntoView({behavior:"smooth",block:"start"})}
+function limparTudo(){["busca","valor","custo","entradaFin","entradaCliente"].forEach(id=>document.getElementById(id).value="");document.getElementById("financeira").value="0.02";document.getElementById("meta").value="400";document.getElementById("productInfo").style.display="none";document.getElementById("resultado").style.display="none";carregarAparelhos()}
+function obterHistorico(){try{return JSON.parse(localStorage.getItem("historicoSimulacoes"))||[]}catch{return[]}}
+function salvarHistorico(c){const h=obterHistorico();h.unshift({id:Date.now(),data:new Date().toLocaleString("pt-BR"),aparelho:nomeAparelho(),financeira:c.taxa===.02?"PayJoy":"Odress",valor:c.valor,entradaCliente:c.entradaCliente,custo:c.custo,lucro:c.lucro,comissao:c.comissao,aplicavel:c.aplicavel,entradaNecessaria:c.entradaNecessaria});localStorage.setItem("historicoSimulacoes",JSON.stringify(h.slice(0,50)));mostrarHistorico()}
+function escapeHTML(t){return String(t).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function mostrarHistorico(){const c=document.getElementById("historico"),h=obterHistorico();if(!h.length){c.innerHTML='<div class="history-empty">Nenhuma simulação realizada ainda.</div>';return}c.innerHTML=h.map(x=>`<div class="history-item"><div class="history-top"><div class="history-title">${escapeHTML(x.aparelho)}</div><div class="history-date">${escapeHTML(x.data)}</div></div><div class="history-details"><div><span>Financeira</span>${x.financeira}</div><div><span>Entrada cliente</span>${money(x.entradaCliente)}</div><div><span>Lucro</span>${money(x.lucro)}</div><div><span>Comissão</span>${money(x.comissao)}</div><div><span>Status</span>${x.aplicavel?"🟢 Aplicável":"🔴 Não aplicável"}</div><div><span>Entrada mínima</span>${money(x.entradaNecessaria)}</div></div><div class="history-actions"><button class="delete-history" onclick="excluirHistorico(${x.id})">Excluir</button></div></div>`).join("")}
+function excluirHistorico(id){localStorage.setItem("historicoSimulacoes",JSON.stringify(obterHistorico().filter(x=>x.id!==id)));mostrarHistorico()}
+function limparHistorico(){if(!obterHistorico().length)return;if(confirm("Tem certeza que deseja apagar todo o histórico?")){localStorage.removeItem("historicoSimulacoes");mostrarHistorico()}}
+carregarAparelhos();mostrarHistorico();
+</script>
+</body>
+</html>
