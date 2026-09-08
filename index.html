@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de Entrada de Aparelhos | Santha Smart</title>
+  <meta name="description" content="Ferramenta profissional para vendedores de smartphones calcularem entradas, lucros e comissoes em negociacoes financiadas." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== TOKENS ===== */
+    :root {
+      --brand-primary:#6366f1; --brand-primary-light:#818cf8; --brand-primary-dark:#4f46e5;
+      --brand-secondary:#06b6d4; --brand-accent:#f59e0b;
+      --success:#10b981; --danger:#ef4444; --warning:#f59e0b;
+      --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-xl:20px;
+      --shadow-md:0 4px 6px rgba(0,0,0,0.1),0 2px 4px rgba(0,0,0,0.08);
+      --shadow-lg:0 10px 15px rgba(0,0,0,0.12),0 4px 6px rgba(0,0,0,0.08);
+      --shadow-xl:0 20px 25px rgba(0,0,0,0.15),0 10px 10px rgba(0,0,0,0.08);
+      --transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
+      --transition-slow:all 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    /* DARK THEME */
+    [data-theme="dark"] {
+      --bg-base:#0f0f13; --bg-surface:#17171f; --bg-card:#1e1e28; --bg-card-hover:#242432;
+      --bg-input:#13131a; --bg-input-focus:#1a1a24;
+      --border-subtle:rgba(255,255,255,0.06); --border-default:rgba(255,255,255,0.10);
+      --border-strong:rgba(255,255,255,0.18);
+      --text-primary:#f1f1f5; --text-secondary:#a1a1b5; --text-muted:#6b6b80;
+      --gradient-header:linear-gradient(135deg,#1e1e28 0%,#17173a 50%,#1a1a2e 100%);
+      --gradient-brand:linear-gradient(135deg,#6366f1,#818cf8);
+      --gradient-success:linear-gradient(135deg,#10b981,#059669);
+      --gradient-danger:linear-gradient(135deg,#ef4444,#dc2626);
+      --glow-brand:0 0 20px rgba(99,102,241,0.25);
+      --glow-success:0 0 20px rgba(16,185,129,0.25);
+      --glow-danger:0 0 20px rgba(239,68,68,0.25);
+    }
+    /* LIGHT THEME */
+    [data-theme="light"] {
+      --bg-base:#f0f2f8; --bg-surface:#e8eaf2; --bg-card:#ffffff; --bg-card-hover:#f8f9ff;
+      --bg-input:#f5f6ff; --bg-input-focus:#eef0ff;
+      --border-subtle:rgba(0,0,0,0.04); --border-default:rgba(0,0,0,0.08);
+      --border-strong:rgba(0,0,0,0.16);
+      --text-primary:#1a1a2e; --text-secondary:#4b4b6b; --text-muted:#8888aa;
+      --gradient-header:linear-gradient(135deg,#eef0ff 0%,#e8eaff 50%,#f0f2ff 100%);
+      --gradient-brand:linear-gradient(135deg,#6366f1,#818cf8);
+      --gradient-success:linear-gradient(135deg,#10b981,#059669);
+      --gradient-danger:linear-gradient(135deg,#ef4444,#dc2626);
+      --glow-brand:0 0 20px rgba(99,102,241,0.15);
+      --glow-success:0 0 20px rgba(16,185,129,0.15);
+      --glow-danger:0 0 20px rgba(239,68,68,0.15);
+      --shadow-md:0 4px 6px rgba(0,0,0,0.07); --shadow-lg:0 10px 15px rgba(0,0,0,0.08);
+      --shadow-xl:0 20px 25px rgba(0,0,0,0.10);
+    }
+    /* RESET */
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg-base);color:var(--text-primary);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;transition:background 0.3s ease,color 0.3s ease;}
+    /* HEADER */
+    .app-header{background:var(--gradient-header);border-bottom:1px solid var(--border-default);padding:0 1.5rem;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;gap:1rem;}
+    .header-logo{display:flex;align-items:center;gap:0.75rem;}
+    .logo-icon{width:40px;height:40px;background:var(--gradient-brand);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:var(--glow-brand);flex-shrink:0;}
+    .logo-text{display:flex;flex-direction:column;}
+    .logo-title{font-size:0.95rem;font-weight:700;color:var(--text-primary);line-height:1.2;}
+    .logo-subtitle{font-size:0.7rem;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;}
+    .header-actions{display:flex;align-items:center;gap:0.5rem;}
+    .btn-theme{width:40px;height:40px;border:1px solid var(--border-default);background:var(--bg-card);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--text-secondary);transition:var(--transition);}
+    .btn-theme:hover{background:var(--bg-card-hover);border-color:var(--border-strong);color:var(--brand-primary);transform:rotate(15deg);}
+    .btn-scroll-history{display:flex;align-items:center;gap:0.4rem;padding:0 0.75rem;height:40px;border:1px solid var(--border-default);background:var(--bg-card);border-radius:var(--radius-md);cursor:pointer;font-size:0.75rem;font-weight:600;color:var(--text-secondary);transition:var(--transition);white-space:nowrap;font-family:'Inter',sans-serif;}
+    .btn-scroll-history:hover{background:var(--brand-primary);border-color:var(--brand-primary);color:#fff;}
+    /* LAYOUT */
+    .app-main{max-width:1200px;margin:0 auto;padding:1.5rem;display:grid;gap:1.5rem;}
+    @media(min-width:900px){.app-main{grid-template-columns:1fr 1fr;padding:2rem;}.full-width{grid-column:1/-1;}}
+    /* CARDS */
+    .card{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-md);transition:var(--transition-slow);}
+    .card:hover{box-shadow:var(--shadow-lg);}
+    .card-header{display:flex;align-items:center;gap:0.6rem;margin-bottom:1.25rem;padding-bottom:0.875rem;border-bottom:1px solid var(--border-subtle);}
+    .card-icon{width:34px;height:34px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+    .card-icon.purple{background:rgba(99,102,241,0.15);}
+    .card-icon.cyan{background:rgba(6,182,212,0.15);}
+    .card-icon.amber{background:rgba(245,158,11,0.15);}
+    .card-icon.green{background:rgba(16,185,129,0.15);}
+    .card-icon.rose{background:rgba(244,63,94,0.15);}
+    .card-title{font-size:0.875rem;font-weight:700;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.04em;}
+    /* FORM */
+    .form-group{margin-bottom:1rem;}
+    .form-group:last-child{margin-bottom:0;}
+    label{display:block;font-size:0.775rem;font-weight:600;color:var(--text-secondary);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.04em;}
+    .input-wrapper{position:relative;}
+    .input-prefix{position:absolute;left:0.875rem;top:50%;transform:translateY(-50%);font-size:0.875rem;font-weight:600;color:var(--text-muted);pointer-events:none;z-index:1;}
+    input[type="text"],input[type="number"],select{width:100%;height:46px;background:var(--bg-input);border:1.5px solid var(--border-default);border-radius:var(--radius-md);color:var(--text-primary);font-family:'Inter',sans-serif;font-size:0.9rem;font-weight:500;transition:var(--transition);outline:none;appearance:none;-webkit-appearance:none;}
+    input[type="text"],input[type="number"]{padding:0 0.875rem;}
+    .has-prefix input[type="number"]{padding-left:2.5rem;}
+    select{padding:0 2.5rem 0 0.875rem;cursor:pointer;}
+    input[type="text"]:focus,input[type="number"]:focus,select:focus{border-color:var(--brand-primary);background:var(--bg-input-focus);box-shadow:0 0 0 3px rgba(99,102,241,0.12);}
+    input.error,select.error{border-color:var(--danger)!important;box-shadow:0 0 0 3px rgba(239,68,68,0.12)!important;}
+    .field-error{margin-top:0.35rem;font-size:0.72rem;color:var(--danger);font-weight:500;min-height:1em;display:block;}
+    .field-error:not(:empty)::before{content:'⚠ ';}
+    /* SEARCH */
+    .search-wrapper{position:relative;}
+    .search-icon{position:absolute;left:0.875rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:1rem;pointer-events:none;z-index:1;}
+    #inputBusca{padding-left:2.5rem;}
+    .dropdown-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg-card);border:1.5px solid var(--border-strong);border-radius:var(--radius-md);max-height:280px;overflow-y:auto;z-index:200;box-shadow:var(--shadow-xl);display:none;}
+    .dropdown-list.open{display:block;}
+    .dropdown-item{padding:0.75rem 1rem;cursor:pointer;transition:var(--transition);border-bottom:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center;gap:0.5rem;}
+    .dropdown-item:last-child{border-bottom:none;}
+    .dropdown-item:hover,.dropdown-item.highlighted{background:rgba(99,102,241,0.1);}
+    .dropdown-item-name{font-size:0.875rem;font-weight:600;color:var(--text-primary);}
+    .dropdown-item-prices{display:flex;flex-direction:column;align-items:flex-end;gap:0.1rem;}
+    .dropdown-item-venda{font-size:0.8rem;font-weight:700;color:var(--brand-primary-light);}
+    .dropdown-item-custo{font-size:0.7rem;color:var(--text-muted);}
+    .dropdown-empty{padding:1.25rem;text-align:center;color:var(--text-muted);font-size:0.875rem;}
+    .selected-device{margin-top:0.5rem;padding:0.5rem 0.75rem;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:var(--radius-sm);font-size:0.8rem;font-weight:600;color:var(--brand-primary-light);display:none;align-items:center;justify-content:space-between;gap:0.5rem;}
+    .selected-device.visible{display:flex;}
+    .btn-clear-device{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1rem;line-height:1;transition:var(--transition);padding:0;}
+    .btn-clear-device:hover{color:var(--danger);}
+    /* BUTTONS */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;height:48px;padding:0 1.25rem;border-radius:var(--radius-md);font-family:'Inter',sans-serif;font-size:0.875rem;font-weight:700;cursor:pointer;border:none;transition:var(--transition);text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;}
+    .btn-primary{background:var(--gradient-brand);color:#fff;box-shadow:0 4px 15px rgba(99,102,241,0.35);}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,0.45);}
+    .btn-ghost{background:var(--bg-input);color:var(--text-secondary);border:1.5px solid var(--border-default);}
+    .btn-ghost:hover{background:var(--bg-card-hover);border-color:var(--border-strong);color:var(--text-primary);}
+    .btn-danger{background:var(--gradient-danger);color:#fff;box-shadow:0 4px 15px rgba(239,68,68,0.25);}
+    .btn-danger:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(239,68,68,0.35);}
+    .btn-sm{height:36px;padding:0 0.875rem;font-size:0.775rem;}
+    .btn-full{width:100%;}
+    .btn-group{display:flex;gap:0.75rem;}
+    .btn-group .btn{flex:1;}
+    /* FINANCEIRA TABS */
+    .financeira-tabs{display:grid;grid-template-columns:1fr 1fr;gap:0.625rem;}
+    .financeira-tab{position:relative;padding:0.875rem 1rem;border-radius:var(--radius-md);border:2px solid var(--border-default);cursor:pointer;transition:var(--transition);background:var(--bg-input);text-align:center;user-select:none;}
+    .financeira-tab input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
+    .financeira-tab .tab-name{display:block;font-size:0.95rem;font-weight:800;color:var(--text-secondary);transition:var(--transition);}
+    .financeira-tab .tab-taxa{display:block;font-size:0.7rem;font-weight:500;color:var(--text-muted);margin-top:0.15rem;transition:var(--transition);}
+    .financeira-tab:hover{border-color:var(--brand-primary);background:rgba(99,102,241,0.05);}
+    .financeira-tab.active{border-color:var(--brand-primary);background:rgba(99,102,241,0.12);box-shadow:var(--glow-brand);}
+    .financeira-tab.active .tab-name{color:var(--brand-primary-light);}
+    .financeira-tab.active .tab-taxa{color:var(--brand-primary);}
+    /* HIGHLIGHT */
+    .highlight-cards{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;}
+    .highlight-card{padding:1.125rem;border-radius:var(--radius-lg);text-align:center;border:2px solid transparent;}
+    .highlight-card.lucro{background:linear-gradient(145deg,rgba(16,185,129,0.08),rgba(16,185,129,0.04));border-color:rgba(16,185,129,0.2);}
+    .highlight-card.lucro.negativo{background:linear-gradient(145deg,rgba(239,68,68,0.08),rgba(239,68,68,0.04));border-color:rgba(239,68,68,0.2);}
+    .highlight-card.comissao{background:linear-gradient(145deg,rgba(245,158,11,0.08),rgba(245,158,11,0.04));border-color:rgba(245,158,11,0.2);}
+    .highlight-label{font-size:0.675rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.35rem;}
+    .highlight-value{font-size:1.35rem;font-weight:900;line-height:1.1;}
+    .highlight-card.lucro .highlight-value{color:var(--success);}
+    .highlight-card.lucro.negativo .highlight-value{color:var(--danger);}
+    .highlight-card.comissao .highlight-value{color:var(--warning);}
+    /* STATUS BANNER */
+    .status-banner{padding:1rem 1.25rem;border-radius:var(--radius-lg);display:flex;align-items:center;gap:0.75rem;border:2px solid transparent;transition:var(--transition-slow);}
+    .status-banner.ok{background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.05));border-color:rgba(16,185,129,0.25);box-shadow:var(--glow-success);}
+    .status-banner.nok{background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.05));border-color:rgba(239,68,68,0.25);box-shadow:var(--glow-danger);}
+    .status-banner.waiting{background:var(--bg-input);border-color:var(--border-default);}
+    .status-icon{font-size:1.5rem;flex-shrink:0;}
+    .status-text h3{font-size:0.95rem;font-weight:800;margin-bottom:0.15rem;}
+    .status-banner.ok .status-text h3{color:var(--success);}
+    .status-banner.nok .status-text h3{color:var(--danger);}
+    .status-banner.waiting .status-text h3{color:var(--text-muted);}
+    .status-text p{font-size:0.775rem;color:var(--text-secondary);line-height:1.4;}
+    /* RESULT ROWS */
+    .result-row{display:flex;justify-content:space-between;align-items:center;padding:0.75rem 1rem;background:var(--bg-input);border-radius:var(--radius-md);border:1px solid var(--border-subtle);transition:var(--transition);}
+    .result-row:hover{background:var(--bg-input-focus);}
+    .result-label{font-size:0.775rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;}
+    .result-value{font-size:0.95rem;font-weight:700;color:var(--text-primary);}
+    /* ENTRADA INFO */
+    .entrada-info{background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.2);border-radius:var(--radius-lg);padding:1rem 1.25rem;display:none;}
+    .entrada-info.visible{display:block;}
+    .entrada-info-title{font-size:0.725rem;font-weight:700;color:var(--warning);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;}
+    .entrada-info-row{display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0;border-bottom:1px solid rgba(245,158,11,0.1);}
+    .entrada-info-row:last-child{border-bottom:none;}
+    .entrada-info-label{font-size:0.775rem;color:var(--text-secondary);}
+    .entrada-info-value{font-size:0.875rem;font-weight:700;color:var(--warning);}
+    /* REVERSA */
+    .reversa-box{background:rgba(6,182,212,0.06);border:1.5px solid rgba(6,182,212,0.2);border-radius:var(--radius-lg);padding:1.25rem;}
+    .reversa-box-title{font-size:0.725rem;font-weight:700;color:var(--brand-secondary);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.875rem;}
+    .reversa-row{display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0;border-bottom:1px solid rgba(6,182,212,0.1);}
+    .reversa-row:last-child{border-bottom:none;}
+    .reversa-label{font-size:0.775rem;color:var(--text-secondary);}
+    .reversa-value{font-size:0.9rem;font-weight:700;color:var(--brand-secondary);}
+    .reversa-message{margin-top:0.75rem;padding:0.625rem 0.875rem;border-radius:var(--radius-sm);font-size:0.8rem;font-weight:600;line-height:1.4;}
+    .reversa-message.can-reduce{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--success);}
+    .reversa-message.needs-more{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:var(--warning);}
+    .reversa-message.no-data{background:var(--bg-input);border:1px solid var(--border-default);color:var(--text-muted);}
+    /* HISTORY */
+    .history-toolbar{display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;}
+    .history-count{font-size:0.775rem;color:var(--text-muted);font-weight:500;}
+    .history-list{display:grid;gap:0.75rem;}
+    .history-item{background:var(--bg-input);border:1px solid var(--border-default);border-radius:var(--radius-lg);padding:1rem 1.125rem;transition:var(--transition);animation:slideIn 0.25s ease;}
+    @keyframes slideIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+    .history-item:hover{background:var(--bg-card-hover);border-color:var(--border-strong);}
+    .history-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.625rem;gap:0.5rem;}
+    .history-device{font-size:0.875rem;font-weight:700;color:var(--text-primary);}
+    .history-date{font-size:0.7rem;color:var(--text-muted);white-space:nowrap;}
+    .history-item-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:0.4rem;}
+    .history-stat{display:flex;flex-direction:column;gap:0.1rem;}
+    .history-stat-label{font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;font-weight:600;}
+    .history-stat-value{font-size:0.8rem;font-weight:700;color:var(--text-primary);}
+    .history-item-footer{display:flex;align-items:center;justify-content:space-between;margin-top:0.75rem;padding-top:0.625rem;border-top:1px solid var(--border-subtle);gap:0.5rem;flex-wrap:wrap;}
+    .history-status{font-size:0.7rem;font-weight:800;padding:0.25rem 0.625rem;border-radius:100px;text-transform:uppercase;letter-spacing:0.04em;}
+    .history-status.ok{background:rgba(16,185,129,0.15);color:var(--success);border:1px solid rgba(16,185,129,0.25);}
+    .history-status.nok{background:rgba(239,68,68,0.15);color:var(--danger);border:1px solid rgba(239,68,68,0.25);}
+    .btn-delete-history{background:none;border:1px solid var(--border-default);border-radius:var(--radius-sm);color:var(--text-muted);font-size:0.725rem;font-weight:600;cursor:pointer;padding:0.25rem 0.625rem;transition:var(--transition);font-family:'Inter',sans-serif;}
+    .btn-delete-history:hover{background:rgba(239,68,68,0.1);border-color:var(--danger);color:var(--danger);}
+    .history-empty{text-align:center;padding:2.5rem 1.5rem;color:var(--text-muted);}
+    .history-empty-icon{font-size:2.5rem;margin-bottom:0.75rem;display:block;}
+    .history-empty-text{font-size:0.875rem;font-weight:500;}
+    /* VALIDATION */
+    .validation-alert{padding:0.75rem 1rem;border-radius:var(--radius-md);background:rgba(239,68,68,0.08);border:1.5px solid rgba(239,68,68,0.2);color:var(--danger);font-size:0.8rem;font-weight:600;display:none;align-items:center;gap:0.5rem;line-height:1.4;}
+    .validation-alert.visible{display:flex;}
+    /* PLACEHOLDER */
+    .result-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1.5rem;text-align:center;color:var(--text-muted);gap:0.75rem;}
+    .result-placeholder-icon{font-size:2.5rem;opacity:0.5;}
+    .result-placeholder-text{font-size:0.875rem;font-weight:500;max-width:220px;line-height:1.5;}
+    /* TOAST */
+    .toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:0.5rem;pointer-events:none;}
+    .toast{padding:0.75rem 1.125rem;background:var(--bg-card);border:1px solid var(--border-strong);border-radius:var(--radius-md);box-shadow:var(--shadow-xl);font-size:0.825rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:0.5rem;animation:toastIn 0.3s ease forwards;pointer-events:all;max-width:300px;}
+    .toast.success{border-left:3px solid var(--success);}
+    .toast.error{border-left:3px solid var(--danger);}
+    .toast.info{border-left:3px solid var(--brand-primary);}
+    @keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+    @keyframes toastOut{from{opacity:1;transform:translateX(0);}to{opacity:0;transform:translateX(20px);}}
+    /* SCROLLBAR */
+    ::-webkit-scrollbar{width:6px;height:6px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:100px;}
+    ::-webkit-scrollbar-thumb:hover{background:var(--text-muted);}
+    /* UTILS */
+    .section-divider{height:1px;background:var(--border-subtle);margin:0.25rem 0;}
+    .mt-1{margin-top:0.5rem;} .mt-2{margin-top:1rem;}
+    .details-grid{display:grid;gap:0.5rem;}
+    @media(max-width:480px){.app-main{padding:1rem;}.card{padding:1.125rem;}.highlight-value{font-size:1.1rem;}.logo-subtitle{display:none;}}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <div class="logo-icon">📱</div>
+      <div class="logo-text">
+        <span class="logo-title">Calculadora de Aparelhos</span>
+        <span class="logo-subtitle">Santha Smart</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btnScrollHistory" class="btn-scroll-history" title="Ver histórico">📋 Histórico</button>
+      <button id="btnTheme" class="btn-theme" title="Alternar tema">🌙</button>
+    </div>
+  </div>
+</header>
+
+<main class="app-main">
+
+  <!-- BUSCA - full width -->
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-icon purple">🔍</div>
+      <h2 class="card-title">Selecionar Aparelho</h2>
+    </div>
+    <div class="form-group">
+      <label for="inputBusca">Buscar aparelho</label>
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="inputBusca" placeholder="Digite marca, modelo ou memória..." autocomplete="off" />
+        <div id="dropdownList" class="dropdown-list"></div>
+      </div>
+      <div id="selectedDevice" class="selected-device">
+        <span id="selectedDeviceName"></span>
+        <button id="btnClearDevice" class="btn-clear-device" title="Remover seleção">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">⚙️</div>
+      <h2 class="card-title">Configurações</h2>
+    </div>
+    <div class="form-group">
+      <label for="inputValorAparelho">Valor do aparelho / financiado</label>
+      <div class="input-wrapper has-prefix">
+        <span class="input-prefix">R$</span>
+        <input type="number" id="inputValorAparelho" placeholder="0,00" step="0.01" min="0" />
+      </div>
+      <span id="errValorAparelho" class="field-error"></span>
+    </div>
+    <div class="form-group">
+      <label>Financeira</label>
+      <div class="financeira-tabs">
+        <label class="financeira-tab active" id="tabPayjoy" for="radioPayjoy">
+          <input type="radio" id="radioPayjoy" name="financeira" value="payjoy" checked />
+          <span class="tab-name">PayJoy</span>
+          <span class="tab-taxa">Taxa: 2%</span>
+        </label>
+        <label class="financeira-tab" id="tabOdress" for="radioOdress">
+          <input type="radio" id="radioOdress" name="financeira" value="odress" />
+          <span class="tab-name">Odress</span>
+          <span class="tab-taxa">Taxa: 7%</span>
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="inputEntradaFinanceira">Entrada estipulada pela financeira</label>
+      <div class="input-wrapper has-prefix">
+        <span class="input-prefix">R$</span>
+        <input type="number" id="inputEntradaFinanceira" placeholder="0,00" step="0.01" min="0" />
+      </div>
+      <span id="errEntradaFinanceira" class="field-error"></span>
+    </div>
+    <div class="form-group">
+      <label for="inputEntradaCliente">Quanto o cliente consegue pagar?</label>
+      <div class="input-wrapper has-prefix">
+        <span class="input-prefix">R$</span>
+        <input type="number" id="inputEntradaCliente" placeholder="0,00" step="0.01" min="0" />
+      </div>
+      <span id="errEntradaCliente" class="field-error"></span>
+    </div>
+  </div>
+
+  <!-- CUSTO E LUCRO -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon amber">💰</div>
+      <h2 class="card-title">Custo & Lucro Mínimo</h2>
+    </div>
+    <div class="form-group">
+      <label for="inputCusto">Custo do aparelho</label>
+      <div class="input-wrapper has-prefix">
+        <span class="input-prefix">R$</span>
+        <input type="number" id="inputCusto" placeholder="0,00" step="0.01" min="0" />
+      </div>
+      <span id="errCusto" class="field-error"></span>
+    </div>
+    <div class="form-group">
+      <label for="inputLucroMinimo">Lucro mínimo desejado</label>
+      <div class="input-wrapper has-prefix">
+        <span class="input-prefix">R$</span>
+        <input type="number" id="inputLucroMinimo" placeholder="400,00" value="400" step="0.01" min="0" />
+      </div>
+      <span id="errLucroMinimo" class="field-error"></span>
+    </div>
+    <div id="validationAlert" class="validation-alert">
+      <span>⚠️</span><span id="validationMessage"></span>
+    </div>
+    <div class="btn-group mt-2">
+      <button id="btnCalcular" class="btn btn-primary">⚡ Calcular</button>
+      <button id="btnNova" class="btn btn-ghost">🔄 Nova</button>
+    </div>
+  </div>
+
+  <!-- RESULTADO - full width -->
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-icon green">📊</div>
+      <h2 class="card-title">Resultado da Simulação</h2>
+    </div>
+    <div id="resultPlaceholder" class="result-placeholder">
+      <span class="result-placeholder-icon">📊</span>
+      <p class="result-placeholder-text">Preencha os campos e clique em <strong>Calcular</strong> para ver o resultado</p>
+    </div>
+    <div id="resultContent" style="display:none;">
+      <div class="highlight-cards">
+        <div class="highlight-card lucro" id="hlLucro">
+          <div class="highlight-label">Lucro da Operação</div>
+          <div class="highlight-value" id="hlLucroValue">—</div>
+        </div>
+        <div class="highlight-card comissao">
+          <div class="highlight-label">Comissão do Vendedor</div>
+          <div class="highlight-value" id="hlComissaoValue">—</div>
+        </div>
+      </div>
+      <div id="statusBanner" class="status-banner waiting">
+        <span class="status-icon" id="statusIcon">⏳</span>
+        <div class="status-text">
+          <h3 id="statusTitle">Aguardando simulação...</h3>
+          <p id="statusSubtitle">Preencha os campos para calcular</p>
+        </div>
+      </div>
+      <div id="entradaInfo" class="entrada-info mt-1">
+        <div class="entrada-info-title">⚠️ Entrada necessária para atingir o lucro mínimo</div>
+        <div class="entrada-info-row">
+          <span class="entrada-info-label">Entrada mínima necessária</span>
+          <span class="entrada-info-value" id="entradaMinValue">—</span>
+        </div>
+        <div class="entrada-info-row">
+          <span class="entrada-info-label">Entrada atual do cliente</span>
+          <span class="entrada-info-value" id="entradaAtualValue">—</span>
+        </div>
+        <div class="entrada-info-row">
+          <span class="entrada-info-label">Valor adicional necessário</span>
+          <span class="entrada-info-value" id="entradaAdicionalValue">—</span>
+        </div>
+      </div>
+      <div class="section-divider mt-1"></div>
+      <div class="details-grid mt-1">
+        <div class="result-row"><span class="result-label">Valor após taxa</span><span class="result-value" id="resValorPosTaxa">—</span></div>
+        <div class="result-row"><span class="result-label">Valor final da simulação</span><span class="result-value" id="resFinalSimulacao">—</span></div>
+        <div class="result-row"><span class="result-label">Custo do aparelho</span><span class="result-value" id="resCusto">—</span></div>
+        <div class="result-row"><span class="result-label">Entrada estipulada</span><span class="result-value" id="resEntradaFinanceira">—</span></div>
+        <div class="result-row"><span class="result-label">Entrada do cliente</span><span class="result-value" id="resEntradaCliente">—</span></div>
+        <div class="result-row"><span class="result-label">Taxa aplicada</span><span class="result-value" id="resTaxa">—</span></div>
+      </div>
+      <div class="mt-2">
+        <button id="btnSalvar" class="btn btn-primary btn-full">💾 Salvar no Histórico</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALCULADORA REVERSA - full width -->
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-icon cyan">🔁</div>
+      <h2 class="card-title">Calculadora Reversa</h2>
+    </div>
+    <div class="reversa-box">
+      <div class="reversa-box-title">📐 Entrada mínima para atingir o lucro mínimo</div>
+      <div class="reversa-row"><span class="reversa-label">Lucro mínimo configurado</span><span class="reversa-value" id="revLucroMinimo">—</span></div>
+      <div class="reversa-row"><span class="reversa-label">Entrada mínima necessária</span><span class="reversa-value" id="revEntradaMin">—</span></div>
+      <div class="reversa-row"><span class="reversa-label">Entrada atual do cliente</span><span class="reversa-value" id="revEntradaAtual">—</span></div>
+      <div id="reversaMessage" class="reversa-message no-data">Preencha os campos para ver a análise reversa.</div>
+    </div>
+  </div>
+
+  <!-- HISTÓRICO - full width -->
+  <section class="card full-width" id="cardHistorico">
+    <div class="card-header">
+      <div class="card-icon rose">📋</div>
+      <h2 class="card-title">Histórico de Simulações</h2>
+    </div>
+    <div class="history-toolbar">
+      <span id="historyCount" class="history-count">0 registros</span>
+      <button id="btnLimparHistorico" class="btn btn-danger btn-sm">🗑️ Limpar Histórico</button>
+    </div>
+    <div id="historyList" class="history-list">
+      <div class="history-empty">
+        <span class="history-empty-icon">📭</span>
+        <p class="history-empty-text">Nenhuma simulação salva ainda.<br>Faça um cálculo e clique em "Salvar no Histórico".</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="toastContainer" class="toast-container"></div>
+
+<script>
+'use strict';
+
+/* ===== 1. CATÁLOGO ===== */
+const CATALOGO = [
+  {marca:'Samsung',modelo:'A07',memoria:'128GB',nome:'Samsung A07 128GB',custo:720.84,venda:1319.90},
+  {marca:'Samsung',modelo:'A07',memoria:'256GB',nome:'Samsung A07 256GB',custo:789.07,venda:1499.00},
+  {marca:'Samsung',modelo:'A17',memoria:'128GB',nome:'Samsung A17 128GB',custo:881.37,venda:1599.00},
+  {marca:'Samsung',modelo:'A17',memoria:'256GB',nome:'Samsung A17 256GB',custo:1281.79,venda:1999.00},
+  {marca:'Motorola',modelo:'Moto G35',memoria:'128GB',nome:'Motorola Moto G35 128GB',custo:881.45,venda:1699.50},
+  {marca:'Motorola',modelo:'Moto G35',memoria:'256GB',nome:'Motorola Moto G35 256GB',custo:946.22,venda:1990.00},
+  {marca:'Realme',modelo:'Note 60x',memoria:'128GB',nome:'Realme Note 60x 128GB',custo:775.00,venda:1400.00},
+  {marca:'Realme',modelo:'Note 70',memoria:'256GB',nome:'Realme Note 70 256GB',custo:880.00,venda:1575.00},
+  {marca:'Realme',modelo:'C75',memoria:'256GB',nome:'Realme C75 256GB',custo:1271.10,venda:1870.00},
+  {marca:'Realme',modelo:'C85',memoria:'256GB',nome:'Realme C85 256GB',custo:1278.75,venda:1990.00},
+  {marca:'Xiaomi',modelo:'Redmi 15C',memoria:'128GB',nome:'Xiaomi Redmi 15C 128GB',custo:810.00,venda:1480.00},
+  {marca:'Xiaomi',modelo:'Redmi 15C',memoria:'256GB',nome:'Xiaomi Redmi 15C 256GB',custo:870.00,venda:1480.00},
+  {marca:'Xiaomi',modelo:'Redmi 15',memoria:'128GB',nome:'Xiaomi Redmi 15 128GB',custo:890.00,venda:1550.00},
+  {marca:'Xiaomi',modelo:'Redmi Note 15',memoria:'128GB',nome:'Xiaomi Redmi Note 15 128GB',custo:1070.00,venda:1890.00},
+  {marca:'Xiaomi',modelo:'Redmi Note 15',memoria:'256GB',nome:'Xiaomi Redmi Note 15 256GB',custo:1225.00,venda:1999.00},
+  {marca:'Infinix',modelo:'Hot 50I',memoria:'256GB',nome:'Infinix Hot 50I 256GB',custo:655.00,venda:1499.00},
+];
+
+const TAXAS = {payjoy:0.02, odress:0.07};
+const LUCRO_MIN_PADRAO = 400;
+const MAX_HIST = 50;
+const STORAGE_KEY = 'santha_historico_v1';
+
+/* ===== 2. DOM ===== */
+const g = id => document.getElementById(id);
+const dom = {
+  inputBusca:g('inputBusca'), dropdownList:g('dropdownList'),
+  selectedDevice:g('selectedDevice'), selectedDeviceName:g('selectedDeviceName'), btnClearDevice:g('btnClearDevice'),
+  inputValorAparelho:g('inputValorAparelho'), radioPayjoy:g('radioPayjoy'), radioOdress:g('radioOdress'),
+  tabPayjoy:g('tabPayjoy'), tabOdress:g('tabOdress'),
+  inputEntradaFinanceira:g('inputEntradaFinanceira'), inputEntradaCliente:g('inputEntradaCliente'),
+  inputCusto:g('inputCusto'), inputLucroMinimo:g('inputLucroMinimo'),
+  btnCalcular:g('btnCalcular'), btnNova:g('btnNova'), btnSalvar:g('btnSalvar'),
+  btnTheme:g('btnTheme'), btnScrollHistory:g('btnScrollHistory'), btnLimparHistorico:g('btnLimparHistorico'),
+  validationAlert:g('validationAlert'), validationMessage:g('validationMessage'),
+  errValorAparelho:g('errValorAparelho'), errEntradaFinanceira:g('errEntradaFinanceira'),
+  errEntradaCliente:g('errEntradaCliente'), errCusto:g('errCusto'), errLucroMinimo:g('errLucroMinimo'),
+  resultPlaceholder:g('resultPlaceholder'), resultContent:g('resultContent'),
+  hlLucro:g('hlLucro'), hlLucroValue:g('hlLucroValue'), hlComissaoValue:g('hlComissaoValue'),
+  statusBanner:g('statusBanner'), statusIcon:g('statusIcon'), statusTitle:g('statusTitle'), statusSubtitle:g('statusSubtitle'),
+  entradaInfo:g('entradaInfo'), entradaMinValue:g('entradaMinValue'), entradaAtualValue:g('entradaAtualValue'), entradaAdicionalValue:g('entradaAdicionalValue'),
+  resValorPosTaxa:g('resValorPosTaxa'), resFinalSimulacao:g('resFinalSimulacao'), resCusto:g('resCusto'),
+  resEntradaFinanceira:g('resEntradaFinanceira'), resEntradaCliente:g('resEntradaCliente'), resTaxa:g('resTaxa'),
+  revLucroMinimo:g('revLucroMinimo'), revEntradaMin:g('revEntradaMin'), revEntradaAtual:g('revEntradaAtual'), reversaMessage:g('reversaMessage'),
+  historyList:g('historyList'), historyCount:g('historyCount'), toastContainer:g('toastContainer'),
+};
+
+/* ===== 3. FORMATAÇÃO ===== */
+const fmtBRL = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
+function formatarMoeda(v){return(v===null||v===undefined||isNaN(v))?'—':fmtBRL.format(v);}
+function fmtPct(v){return `${(v*100).toFixed(0)}%`;}
+function parseValor(s){if(s===''||s===null||s===undefined)return NaN;const n=parseFloat(s);return isNaN(n)?NaN:n;}
+
+/* ===== 4. PESQUISA ===== */
+let searchResults=[], hlIdx=-1;
+function normalize(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+function buscarAparelhos(q){
+  if(!q||!q.trim())return[];
+  const nq=normalize(q.trim());
+  return CATALOGO.filter(a=>normalize(a.nome).includes(nq)||normalize(a.marca).includes(nq)||normalize(a.modelo).includes(nq)||normalize(a.memoria).includes(nq));
+}
+function renderDropdown(results){
+  searchResults=results; hlIdx=-1;
+  if(!results.length){
+    dom.dropdownList.innerHTML='<div class="dropdown-empty">Nenhum aparelho encontrado</div>';
+  } else {
+    dom.dropdownList.innerHTML=results.map((a,i)=>`
+      <div class="dropdown-item" data-index="${i}">
+        <span class="dropdown-item-name">${a.nome}</span>
+        <div class="dropdown-item-prices">
+          <span class="dropdown-item-venda">${formatarMoeda(a.venda)}</span>
+          <span class="dropdown-item-custo">custo ${formatarMoeda(a.custo)}</span>
+        </div>
+      </div>`).join('');
+    dom.dropdownList.querySelectorAll('.dropdown-item').forEach(el=>{
+      el.addEventListener('mousedown',e=>{e.preventDefault();selecionarAparelho(searchResults[+el.dataset.index]);});
+    });
+  }
+  dom.dropdownList.classList.add('open');
+}
+function fecharDropdown(){dom.dropdownList.classList.remove('open');hlIdx=-1;}
+
+/* ===== 5. SELEÇÃO ===== */
+let aparelhoSelecionado=null;
+function selecionarAparelho(a){
+  aparelhoSelecionado=a;
+  dom.inputBusca.value=a.nome;
+  dom.inputValorAparelho.value=a.venda.toFixed(2);
+  dom.inputCusto.value=a.custo.toFixed(2);
+  dom.selectedDeviceName.textContent=a.nome;
+  dom.selectedDevice.classList.add('visible');
+  fecharDropdown(); limparErros(); calcularSimulacao();
+}
+function limparAparelho(){
+  aparelhoSelecionado=null; dom.inputBusca.value='';
+  dom.selectedDevice.classList.remove('visible'); fecharDropdown();
+}
+
+/* ===== 6. CÁLCULO PRINCIPAL ===== */
+let ultimoResultado=null;
+function calcularSimulacao(){
+  const valorAparelho     = parseValor(dom.inputValorAparelho.value);
+  const entradaFinanceira = parseValor(dom.inputEntradaFinanceira.value)||0;
+  const entradaCliente    = parseValor(dom.inputEntradaCliente.value)||0;
+  const custoAparelho     = parseValor(dom.inputCusto.value);
+  const lucroMinimo       = parseValor(dom.inputLucroMinimo.value);
+  const financeira        = dom.radioPayjoy.checked?'payjoy':'odress';
+  const taxa              = TAXAS[financeira];
+  if(!validarDados(valorAparelho,entradaFinanceira,entradaCliente,custoAparelho,lucroMinimo)){
+    ocultarResultado(); atualizarReversa(null); return;
+  }
+  ocultarAlertaValidacao();
+  // Cálculos com precisão total - arredondamento só na exibição
+  const base              = valorAparelho - entradaFinanceira;
+  const descontoTaxa      = base * taxa;
+  const valorPosTaxa      = base - descontoTaxa;
+  const finalSimulacao    = valorPosTaxa + entradaCliente;
+  const lucro             = finalSimulacao - custoAparelho;
+  const comissao          = Math.max(0, lucro) * 0.03;
+  const aplicavel         = lucro >= lucroMinimo;
+  const entradaNecessaria   = Math.max(0, lucroMinimo + custoAparelho - valorPosTaxa);
+  const adicionalNecessario = Math.max(0, entradaNecessaria - entradaCliente);
+  ultimoResultado={
+    aparelho:aparelhoSelecionado?aparelhoSelecionado.nome:'—',
+    financeira,taxa,valorAparelho,entradaFinanceira,entradaCliente,
+    custoAparelho,lucroMinimo,base,descontoTaxa,valorPosTaxa,
+    finalSimulacao,lucro,comissao,aplicavel,entradaNecessaria,adicionalNecessario,
+  };
+  renderizarResultado(ultimoResultado);
+  atualizarReversa(ultimoResultado);
+}
+
+/* ===== 7. REVERSA ===== */
+function atualizarReversa(res){
+  if(!res){
+    dom.revLucroMinimo.textContent=dom.revEntradaMin.textContent=dom.revEntradaAtual.textContent='—';
+    dom.reversaMessage.className='reversa-message no-data';
+    dom.reversaMessage.textContent='Preencha os campos para ver a análise reversa.';
+    return;
+  }
+  dom.revLucroMinimo.textContent=formatarMoeda(res.lucroMinimo);
+  dom.revEntradaMin.textContent=formatarMoeda(res.entradaNecessaria);
+  dom.revEntradaAtual.textContent=formatarMoeda(res.entradaCliente);
+  if(res.aplicavel){
+    const diff=res.entradaCliente-res.entradaNecessaria;
+    dom.reversaMessage.className='reversa-message can-reduce';
+    dom.reversaMessage.textContent=diff>0.005
+      ?`✅ Negociação atende ao lucro mínimo! Você pode reduzir ${formatarMoeda(diff)} da entrada e ainda atingir ${formatarMoeda(res.lucroMinimo)} de lucro.`
+      :`✅ Negociação atende exatamente ao lucro mínimo de ${formatarMoeda(res.lucroMinimo)}.`;
+  } else {
+    dom.reversaMessage.className='reversa-message needs-more';
+    dom.reversaMessage.textContent=`⚠️ Cliente precisa dar no mínimo ${formatarMoeda(res.entradaNecessaria)} de entrada. Faltam ${formatarMoeda(res.adicionalNecessario)} para atingir o lucro mínimo.`;
+  }
+}
+
+/* ===== 8. VALIDAÇÕES ===== */
+function limparErros(){
+  ['errValorAparelho','errEntradaFinanceira','errEntradaCliente','errCusto','errLucroMinimo']
+    .forEach(id=>{const e=g(id);if(e)e.textContent='';});
+  ['inputValorAparelho','inputEntradaFinanceira','inputEntradaCliente','inputCusto','inputLucroMinimo']
+    .forEach(id=>{const e=g(id);if(e)e.classList.remove('error');});
+  ocultarAlertaValidacao();
+}
+function setErr(inputId,errId,msg){const i=g(inputId),e=g(errId);if(i)i.classList.add('error');if(e)e.textContent=msg;}
+function ocultarAlertaValidacao(){dom.validationAlert.classList.remove('visible');}
+function mostrarAlertaValidacao(msg){dom.validationMessage.textContent=msg;dom.validationAlert.classList.add('visible');}
+function validarDados(vA,eF,eC,cA,lM){
+  limparErros(); let ok=true;
+  if(isNaN(vA)||vA<=0){setErr('inputValorAparelho','errValorAparelho','Informe o valor do aparelho (maior que zero)');ok=false;}
+  if(!isNaN(cA)&&cA<0){setErr('inputCusto','errCusto','O custo não pode ser negativo');ok=false;}
+  else if(isNaN(cA)||cA<=0){setErr('inputCusto','errCusto','Informe o custo do aparelho');ok=false;}
+  if(!isNaN(eF)&&eF<0){setErr('inputEntradaFinanceira','errEntradaFinanceira','A entrada não pode ser negativa');ok=false;}
+  if(!isNaN(eC)&&eC<0){setErr('inputEntradaCliente','errEntradaCliente','O valor não pode ser negativo');ok=false;}
+  if(isNaN(lM)){setErr('inputLucroMinimo','errLucroMinimo','Informe o lucro mínimo');ok=false;}
+  else if(lM<0){setErr('inputLucroMinimo','errLucroMinimo','O lucro mínimo não pode ser negativo');ok=false;}
+  if(!isNaN(vA)&&vA>0&&!isNaN(eF)&&eF>vA){
+    setErr('inputEntradaFinanceira','errEntradaFinanceira','');
+    mostrarAlertaValidacao('A entrada estipulada não pode ser maior que o valor do aparelho.');
+    ok=false;
+  }
+  return ok;
+}
+
+/* ===== 9. RENDERIZAR RESULTADO ===== */
+function ocultarResultado(){
+  dom.resultPlaceholder.style.display='flex';
+  dom.resultContent.style.display='none';
+  ultimoResultado=null;
+}
+function renderizarResultado(res){
+  dom.resultPlaceholder.style.display='none';
+  dom.resultContent.style.display='block';
+  dom.hlLucroValue.textContent=formatarMoeda(res.lucro);
+  dom.hlComissaoValue.textContent=formatarMoeda(res.comissao);
+  dom.hlLucro.classList.toggle('negativo',res.lucro<0);
+  if(res.aplicavel){
+    dom.statusBanner.className='status-banner ok';
+    dom.statusIcon.textContent='✅';
+    dom.statusTitle.textContent='OFERTA APLICÁVEL';
+    dom.statusSubtitle.textContent=`Lucro de ${formatarMoeda(res.lucro)} supera o mínimo de ${formatarMoeda(res.lucroMinimo)}.`;
+  } else {
+    dom.statusBanner.className='status-banner nok';
+    dom.statusIcon.textContent='❌';
+    dom.statusTitle.textContent='OFERTA NÃO APLICÁVEL';
+    dom.statusSubtitle.textContent=`Lucro de ${formatarMoeda(res.lucro)} está abaixo do mínimo de ${formatarMoeda(res.lucroMinimo)}.`;
+  }
+  if(!res.aplicavel&&res.entradaNecessaria>0){
+    dom.entradaInfo.classList.add('visible');
+    dom.entradaMinValue.textContent=formatarMoeda(res.entradaNecessaria);
+    dom.entradaAtualValue.textContent=formatarMoeda(res.entradaCliente);
+    dom.entradaAdicionalValue.textContent=formatarMoeda(res.adicionalNecessario);
+  } else {dom.entradaInfo.classList.remove('visible');}
+  dom.resValorPosTaxa.textContent=formatarMoeda(res.valorPosTaxa);
+  dom.resFinalSimulacao.textContent=formatarMoeda(res.finalSimulacao);
+  dom.resCusto.textContent=formatarMoeda(res.custoAparelho);
+  dom.resEntradaFinanceira.textContent=formatarMoeda(res.entradaFinanceira);
+  dom.resEntradaCliente.textContent=formatarMoeda(res.entradaCliente);
+  dom.resTaxa.textContent=`${res.financeira==='payjoy'?'PayJoy':'Odress'} — ${fmtPct(res.taxa)}`;
+}
+
+/* ===== 10. HISTÓRICO ===== */
+function carregarHistorico(){try{const d=localStorage.getItem(STORAGE_KEY);return d?JSON.parse(d):[];}catch{return[];}}
+function salvarHistoricoStorage(h){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(h));}catch(e){console.warn(e);}}
+function salvarHistorico(){
+  if(!ultimoResultado){mostrarToast('Faça um cálculo antes de salvar.','error');return;}
+  const hist=carregarHistorico();
+  const r={
+    id:Date.now(), dataHora:new Date().toLocaleString('pt-BR'),
+    aparelho:ultimoResultado.aparelho,
+    financeira:ultimoResultado.financeira==='payjoy'?'PayJoy':'Odress',
+    taxa:ultimoResultado.taxa,
+    valorAparelho:ultimoResultado.valorAparelho,
+    entradaFinanceira:ultimoResultado.entradaFinanceira,
+    entradaCliente:ultimoResultado.entradaCliente,
+    custoAparelho:ultimoResultado.custoAparelho,
+    lucroMinimo:ultimoResultado.lucroMinimo,
+    valorPosTaxa:ultimoResultado.valorPosTaxa,
+    finalSimulacao:ultimoResultado.finalSimulacao,
+    lucro:ultimoResultado.lucro,
+    comissao:ultimoResultado.comissao,
+    aplicavel:ultimoResultado.aplicavel,
+    entradaNecessaria:ultimoResultado.entradaNecessaria,
+    adicionalNecessario:ultimoResultado.adicionalNecessario,
+  };
+  hist.unshift(r);
+  const lim=hist.slice(0,MAX_HIST);
+  salvarHistoricoStorage(lim); renderizarHistorico(lim);
+  mostrarToast(`Simulação salva! (${r.aparelho})`,'success');
+}
+function excluirRegistro(id){
+  const hist=carregarHistorico().filter(r=>r.id!==id);
+  salvarHistoricoStorage(hist); renderizarHistorico(hist);
+  mostrarToast('Registro excluído.','info');
+}
+function limparHistorico(){
+  if(!confirm('Tem certeza? Todos os registros serão apagados permanentemente.'))return;
+  salvarHistoricoStorage([]); renderizarHistorico([]);
+  mostrarToast('Histórico limpo.','info');
+}
+
+/* ===== 11. RENDERIZAR HISTÓRICO ===== */
+function renderizarHistorico(hist){
+  if(!hist)hist=carregarHistorico();
+  dom.historyCount.textContent=`${hist.length} registro${hist.length!==1?'s':''}`;
+  if(!hist.length){
+    dom.historyList.innerHTML='<div class="history-empty"><span class="history-empty-icon">📭</span><p class="history-empty-text">Nenhuma simulação salva ainda.<br>Faça um cálculo e clique em "Salvar no Histórico".</p></div>';
+    return;
+  }
+  dom.historyList.innerHTML=hist.map(r=>`
+    <div class="history-item" data-id="${r.id}">
+      <div class="history-item-header">
+        <span class="history-device">${r.aparelho||'—'}</span>
+        <span class="history-date">${r.dataHora}</span>
+      </div>
+      <div class="history-item-body">
+        <div class="history-stat"><span class="history-stat-label">Financeira</span><span class="history-stat-value">${r.financeira} (${fmtPct(r.taxa)})</span></div>
+        <div class="history-stat"><span class="history-stat-label">Valor Aparelho</span><span class="history-stat-value">${formatarMoeda(r.valorAparelho)}</span></div>
+        <div class="history-stat"><span class="history-stat-label">Ent. Financeira</span><span class="history-stat-value">${formatarMoeda(r.entradaFinanceira)}</span></div>
+        <div class="history-stat"><span class="history-stat-label">Ent. Cliente</span><span class="history-stat-value">${formatarMoeda(r.entradaCliente)}</span></div>
+        <div class="history-stat"><span class="history-stat-label">Custo</span><span class="history-stat-value">${formatarMoeda(r.custoAparelho)}</span></div>
+        <div class="history-stat"><span class="history-stat-label">Lucro</span><span class="history-stat-value" style="color:${r.lucro>=0?'var(--success)':'var(--danger)'}">${formatarMoeda(r.lucro)}</span></div>
+        <div class="history-stat"><span class="history-stat-label">Comissão</span><span class="history-stat-value" style="color:var(--warning)">${formatarMoeda(r.comissao)}</span></div>
+        <div class="history-stat"><span class="history-stat-label">Lucro Mín.</span><span class="history-stat-value">${formatarMoeda(r.lucroMinimo)}</span></div>
+      </div>
+      <div class="history-item-footer">
+        <span class="history-status ${r.aplicavel?'ok':'nok'}">${r.aplicavel?'✓ Aplicável':'✗ Não aplicável'}</span>
+        <button class="btn-delete-history" data-id="${r.id}">🗑️ Excluir</button>
+      </div>
+    </div>`).join('');
+  dom.historyList.querySelectorAll('.btn-delete-history').forEach(btn=>{
+    btn.addEventListener('click',()=>excluirRegistro(Number(btn.dataset.id)));
+  });
+}
+
+/* ===== 12. LIMPAR SIMULAÇÃO ===== */
+function limparSimulacao(){
+  dom.inputBusca.value=''; dom.inputValorAparelho.value='';
+  dom.inputEntradaFinanceira.value=''; dom.inputEntradaCliente.value='';
+  dom.inputCusto.value=''; dom.inputLucroMinimo.value=LUCRO_MIN_PADRAO;
+  dom.radioPayjoy.checked=true; dom.radioOdress.checked=false;
+  dom.tabPayjoy.classList.add('active'); dom.tabOdress.classList.remove('active');
+  limparAparelho(); limparErros(); ocultarResultado(); atualizarReversa(null);
+  mostrarToast('Nova simulação iniciada.','info');
+}
+
+/* ===== 13. TEMA ===== */
+function carregarTema(){
+  const t=localStorage.getItem('santha_tema')||'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  dom.btnTheme.textContent=t==='dark'?'☀️':'🌙';
+}
+function alternarTema(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const nxt=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',nxt);
+  dom.btnTheme.textContent=nxt==='dark'?'☀️':'🌙';
+  localStorage.setItem('santha_tema',nxt);
+}
+
+/* ===== 14. TOAST ===== */
+function mostrarToast(msg,tipo='info'){
+  const icons={success:'✅',error:'❌',info:'ℹ️'};
+  const t=document.createElement('div');
+  t.className=`toast ${tipo}`;
+  t.innerHTML=`<span>${icons[tipo]||'💬'}</span><span>${msg}</span>`;
+  dom.toastContainer.appendChild(t);
+  setTimeout(()=>{t.style.animation='toastOut 0.3s ease forwards';setTimeout(()=>t.remove(),300);},3000);
+}
+
+/* ===== 15. EVENTOS ===== */
+function registrarEventos(){
+  dom.inputBusca.addEventListener('input',()=>{
+    const q=dom.inputBusca.value;
+    if(q.trim().length<1){fecharDropdown();return;}
+    renderDropdown(buscarAparelhos(q));
+  });
+  dom.inputBusca.addEventListener('keydown',e=>{
+    const items=dom.dropdownList.querySelectorAll('.dropdown-item');
+    if(!dom.dropdownList.classList.contains('open')||!items.length)return;
+    if(e.key==='ArrowDown'){e.preventDefault();hlIdx=Math.min(hlIdx+1,items.length-1);items.forEach((el,i)=>el.classList.toggle('highlighted',i===hlIdx));}
+    else if(e.key==='ArrowUp'){e.preventDefault();hlIdx=Math.max(hlIdx-1,0);items.forEach((el,i)=>el.classList.toggle('highlighted',i===hlIdx));}
+    else if(e.key==='Enter'&&hlIdx>=0){e.preventDefault();selecionarAparelho(searchResults[hlIdx]);}
+    else if(e.key==='Escape'){fecharDropdown();}
+  });
+  dom.inputBusca.addEventListener('focus',()=>{
+    if(dom.inputBusca.value.trim().length>=1)renderDropdown(buscarAparelhos(dom.inputBusca.value));
+  });
+  document.addEventListener('click',e=>{
+    if(!dom.inputBusca.contains(e.target)&&!dom.dropdownList.contains(e.target))fecharDropdown();
+  });
+  dom.btnClearDevice.addEventListener('click',limparAparelho);
+  [dom.tabPayjoy,dom.tabOdress].forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      const isPay=tab.id==='tabPayjoy';
+      dom.radioPayjoy.checked=isPay; dom.radioOdress.checked=!isPay;
+      dom.tabPayjoy.classList.toggle('active',isPay);
+      dom.tabOdress.classList.toggle('active',!isPay);
+      calcularSimulacao();
+    });
+  });
+  [dom.radioPayjoy,dom.radioOdress].forEach(r=>r.addEventListener('change',()=>{
+    const isPay=dom.radioPayjoy.checked;
+    dom.tabPayjoy.classList.toggle('active',isPay);
+    dom.tabOdress.classList.toggle('active',!isPay);
+    calcularSimulacao();
+  }));
+  [dom.inputValorAparelho,dom.inputEntradaFinanceira,dom.inputEntradaCliente,dom.inputCusto,dom.inputLucroMinimo]
+    .forEach(inp=>{inp.addEventListener('input',calcularSimulacao);inp.addEventListener('change',calcularSimulacao);});
+  dom.btnCalcular.addEventListener('click',calcularSimulacao);
+  dom.btnNova.addEventListener('click',limparSimulacao);
+  dom.btnSalvar.addEventListener('click',salvarHistorico);
+  dom.btnTheme.addEventListener('click',alternarTema);
+  dom.btnLimparHistorico.addEventListener('click',limparHistorico);
+  dom.btnScrollHistory.addEventListener('click',()=>g('cardHistorico').scrollIntoView({behavior:'smooth',block:'start'}));
+}
+
+/* ===== INIT ===== */
+function init(){carregarTema();registrarEventos();renderizarHistorico();}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
